@@ -63,138 +63,146 @@ int main() {
 
 
 
+
 2.
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
+#include<stdio.h>
+#include<time.h>
 
 void bfs(int a[10][10], int n, int source) {
-    int s[10], q[10], f = 0, r = -1, t, v;
-    for (v = 0; v < n; v++) {
-        s[v] = 0;
-    }
-    q[++r] = source;
-    s[source] = 1;
-    printf("The BFS traversal is:\n%d ", source); // Print source node outside the loop
-    while (f <= r) {
-        t = q[f++];
-        for (v = 0; v < n; v++) {
-            if (a[t][v] == 1 && s[v] == 0) {
-                q[++r] = v;
-                printf("%d ", v); // Print current node
-                s[v] = 1;
+    int visited[10] = {0}; // Array to keep track of visited vertices
+    int queue[10], front = 0, rear = -1;
+
+    queue[++rear] = source; // Enqueue the source vertex
+    visited[source] = 1; // Mark source vertex as visited
+
+    printf("BFS Traversal: %d", source);
+
+    while(front <= rear) {
+        int current = queue[front++]; // Dequeue a vertex
+        for(int v = 0; v < n; v++) {
+            if(a[current][v] == 1 && !visited[v]) { // If adjacent vertex is not visited
+                printf(" -> %d", v); // Print the visited vertex
+                queue[++rear] = v; // Enqueue it
+                visited[v] = 1; // Mark it as visited
             }
         }
     }
-    printf("\n");
 }
 
 int main() {
-    int a[10][10], n, i, j, s;
+    int a[10][10], n, s;
     double clk;
     clock_t starttime, endtime;
-    
-    printf("\nEnter the number of cities: ");
+
+    printf("Enter the number of cities: ");
     scanf("%d", &n);
-    printf("\nEnter the matrix representation:\n");
-    for (i = 0; i < n; i++)
-        for (j = 0; j < n; j++)
+
+    printf("Enter the adjacency matrix:\n");
+    for(int i = 0; i < n; i++)
+        for(int j = 0; j < n; j++)
             scanf("%d", &a[i][j]);
-    printf("\nEnter the source city: ");
+
+    printf("Enter the source city: ");
     scanf("%d", &s);
-    
+
     starttime = clock();
     bfs(a, n, s);
     endtime = clock();
+
     clk = (double)(endtime - starttime) / CLOCKS_PER_SEC;
-    printf("\nThe run time is %f\n", clk);
-    
+    printf("\nRun time: %f seconds\n", clk);
+
     return 0;
 }
 
 
-
 3.
-#include<time.h>
 #include<stdio.h>
+#include<time.h>
 
-int n,a[50][50],i,j,count=0,reach[50],pos[50];
+int n, a[50][50], i, j, count = 0, reach[50], pos[50];
 
 void read_matrix();
 void dfs(int v);
 int adjacent(int i);
 int checkreach(int u);
 
-int main()
-{
-        int v;
-        double clk;
-        clock_t starttime,endtime;
-        printf("\n\t\t\t DEPTH FIRST SEARCH \n");
-        printf("\n Enter number of Lands to be surveyed:");
-        scanf("%d",&n);
-        for(i=1;i<=n;i++)
-       {	
-          	pos[i]=0;
-       }
-        read_matrix();
-        printf("\n Enter the starting Land number:");
-        scanf("%d",&v);
-        starttime=clock();
-        dfs(v);
-        endtime=clock();
-        clk=(double)(endtime-starttime)/CLOCKS_PER_SEC;
-        printf("\n Vertices reached from the given vertex are...\n");
-       for(i=1;i<=count;i++)
-       {
-	printf("%d\t",reach[i]);
-       }
-        printf("\nThe run time is %f\n",clk);
-        return 0;
+int main() {
+    int v;
+    double clk;
+    clock_t starttime, endtime;
+    
+    printf("\n\t\t\tDEPTH FIRST SEARCH\n");
+    printf("\nEnter the number of Lands to be surveyed: ");
+    scanf("%d", &n);
+    
+    for (i = 1; i <= n; i++) {
+        pos[i] = 0;
+    }
+    
+    read_matrix();
+    
+    printf("\nEnter the starting Land number: ");
+    scanf("%d", &v);
+    
+    starttime = clock();
+    dfs(v);
+    endtime = clock();
+    
+    clk = (double)(endtime - starttime) / CLOCKS_PER_SEC;
+    
+    printf("\nVertices reached from the given vertex are:\n");
+    for (i = 1; i <= count; i++) {
+        printf("%d\t", reach[i]);
+    }
+    
+    printf("\nThe runtime is %f\n", clk);
+    
+    return 0;
 }
 
-void read_matrix()
-{
-	printf("\n Enter the adjacency matrix (Enter 0/1)\n");
-	for(i=1;i<=n;i++)
-	for(j=1;j<=n;j++)
-	if(i!=j)
-	{
-		printf("(%d,%d):",i,j);
-		scanf("%d",&a[i][j]);
-	}
+void read_matrix() {
+    printf("\nEnter the adjacency matrix (Enter 0/1):\n");
+    for (i = 1; i <= n; i++) {
+        for (j = 1; j <= n; j++) {
+            if (i != j) {
+                printf("(%d,%d): ", i, j);
+                scanf("%d", &a[i][j]);
+            }
+        }
+    }
 }
 
-void dfs(int v)
-{
-	int u;
-	reach[++count]=v;
-	u=adjacent(v);
-	while(u)
-	{
-		if(checkreach(u)==0) dfs(u);
-		u=adjacent(v);
-	}
+void dfs(int v) {
+    int u;
+    reach[++count] = v;
+    u = adjacent(v);
+    while (u) {
+        if (checkreach(u) == 0) {
+            dfs(u);
+        }
+        u = adjacent(v);
+    }
 }
 
-int adjacent(int i)
-{
-	for(j=pos[i]+1;j<=n;j++)
-	if(a[i][j]==1)
-	{
-		pos[i]=j;
-		return j;
-	}
-	pos[i]=n+1;
-	return 0;
+int adjacent(int i) {
+    for (j = pos[i] + 1; j <= n; j++) {
+        if (a[i][j] == 1) {
+            pos[i] = j;
+            return j;
+        }
+    }
+    pos[i] = n + 1;
+    return 0;
 }
 
-int checkreach(int u)
-{
-	for(i=1;i<=count;i++)
-	if(reach[i]==u)
-		return 1;
-	return 0;
+int checkreach(int u) {
+    for (i = 1; i <= count; i++) {
+        if (reach[i] == u) {
+            return 1;
+        }
+    }
+    return 0;
 }
 
 
@@ -202,63 +210,134 @@ int checkreach(int u)
 
 4.
 #include <stdio.h>
-#include <time.h>
 #include <stdlib.h>
+#include <time.h>
 
-void insertion_sort(long a[], int n)
+void insertionSort(long long a[], int n)
 {
     int i, j;
-    long v;
-    for(i = 1; i < n; i++)
+    long long v;
+    for (i = 1; i < n; i++)
     {
         v = a[i];
         j = i - 1;
-        while(j >= 0 && a[j] > v)
+        while (j >= 0 && a[j] > v)
         {
             a[j + 1] = a[j];
             j--;
         }
         a[j + 1] = v;
     }
-    printf("sorted numbers are:\n");
-    for(i = 0; i < n; i++)
-        printf("%ld\n", a[i]);
+    printf("Sorted numbers are:\n");
+    for (i = 0; i < n; i++)
+    {
+        printf("%lld\n", a[i]);
+    }
+}
+void printArray(long long array[], int size)
+{
+    for (int i = 0; i < size; i++)
+    {
+        printf("%d ", array[i]);
+    }
+    printf("\n");
 }
 
 int main()
 {
-    clock_t starttime, endtime;
-    starttime = clock();
-    double clk;
-    int i, n;
-    long a[10];
-    printf("Enter the value of n: ");
-    scanf("%d", &n);
-    if(n > 10)
+    int size;
+    srand(time(NULL));
+
+    printf("Enter the number of elements: ");
+    scanf("%d", &size);
+
+    long long data[size];
+    for (int i = 0; i < size; i++)
     {
-        printf("n should be less than or equal to 10\n");
-        return 1;
+        data[i] = 9000000000 + (rand() % 99999999) + 1;
     }
-    for(i = 0; i < n; i++)
-        a[i] = 9000000000 + (rand() % 99999999) + 1;
-    printf("\nphone numbers are:\n");
-    for(i = 0; i < n; i++)
-        printf("%ld\n", a[i]);
-    insertion_sort(a, n);
-    endtime = clock();
-    clk = (double) (endtime - starttime) / CLOCKS_PER_SEC;
-    printf("\nTHE RUN TIME IS : %f\n", clk);
+
+    printf("Unsorted array:\n");
+    printArray(data, size);
+
+    clock_t start_time = clock();
+    insertionSort(data, size);
+    clock_t end_time = clock();
+    double time_taken = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
+
+    printf("Sorted array:\n");
+    printArray(data, size);
+    printf("Time taken to sort the array: %f seconds\n", time_taken);
+    return 0;
+}
+
+
+// second code - insertion sort 
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+void insertionSort(int array[], int size)
+{
+    for (int i = 1; i < size; i++)
+    {
+        int key = array[i];
+        int j = i - 1;
+        while (j >= 0 && array[j] > key)
+        {
+            array[j + 1] = array[j];
+            j = j - 1;
+        }
+        array[j + 1] = key;
+    }
+}
+void printArray(int array[], int size)
+{
+    for (int i = 0; i < size; i++)
+    {
+        printf("%d ", array[i]);
+    }
+    printf("\n");
+}
+int main()
+{
+    int size;
+    srand(time(NULL));
+
+    printf("Enter the number of elements: ");
+    scanf("%d", &size);
+
+    int data[size];
+    for (int i = 0; i < size; i++)
+    {
+        data[i] = rand() % 100;
+    }
+
+    printf("Unsorted array:\n");
+    printArray(data, size);
+
+    clock_t start_time = clock();
+    insertionSort(data, size);
+    clock_t end_time = clock();
+    double time_taken = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
+
+    printf("Sorted array:\n");
+    printArray(data, size);
+    printf("Time taken to sort the array: %f seconds\n", time_taken);
     return 0;
 }
 
 
 
 5.
-#include<stdio.h>
-#include<time.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
-int a[500000];
+#define MAX 500000
+
+int a[MAX];
 
 void merge(int low, int mid, int high);
 void merge_sort(int low, int high);
@@ -277,10 +356,12 @@ void merge_sort(int low, int high)
 
 void merge(int low, int mid, int high)
 {
-    int h, i, j, b[500000], k;
+    int h, i, j, k;
+    int b[MAX];
     h = low;
     i = low;
     j = mid + 1;
+
     while((h <= mid) && (j <= high))
     {
         if(a[h] <= a[j])
@@ -295,6 +376,7 @@ void merge(int low, int mid, int high)
         }
         i++;
     }
+
     if(h > mid)
     {
         for(k = j; k <= high; k++)
@@ -311,7 +393,11 @@ void merge(int low, int mid, int high)
             i++;
         }
     }
-    for(k = low; k <= high; k++) a[k] = b[k];
+
+    for(k = low; k <= high; k++) 
+    {
+        a[k] = b[k];
+    }
 }
 
 int main()
@@ -320,55 +406,60 @@ int main()
     double clk;
     clock_t starttime, endtime;
     printf("MERGE SORT\n");
-    printf("Enter the number of employee records:\n ");
+    printf("Enter the number of employee records: ");
     scanf("%d", &n);
+
+    if (n > MAX)
+    {
+        printf("The number of records exceeds the maximum allowed limit of %d.\n", MAX);
+        return 1;
+    }
+
+    srand(time(NULL)); // Seed the random number generator
+
     for(i = 0; i < n; i++) 
     {
         a[i] = rand() % 100;
-        printf("The Employee IDs are: \t%d", a[i]);
+        printf("The Employee IDs are: \t%d\n", a[i]);
     }
     printf("\n");
+
     starttime = clock(); 
     merge_sort(0, n - 1);
     endtime = clock();
     clk = (double)(endtime - starttime) / CLOCKS_PER_SEC;
+
     printf("\nEmployee IDs in sorted order:\n");
     for(i = 0; i < n; i++) 
     {
-        printf("\t%d", a[i]);
+        printf("\t%d\n", a[i]);
     }
-    printf("\nThe run time is %f\n", clk);
+    printf("\nThe run time is %f seconds\n", clk);
+
     return 0;
 }
 
-
-
-
 6.
-#include<stdio.h>
-#include<time.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
-int partition(int a[], int low, int high)
-{
-    int i, j, temp, pivot;
-    pivot = a[low];
-    i = low + 1;
-    j = high;
-    while(1)
-    {
-        while(i < high && a[i] <= pivot)
+#define MAX 200000
+
+int partition(int a[], int low, int high) {
+    int i = low + 1, j = high, temp;
+    int pivot = a[low];
+
+    while(1) {
+        while(i <= high && a[i] <= pivot)
             i++;
         while(a[j] > pivot)
             j--;
-        if(i < j)
-        {
+        if(i < j) {
             temp = a[i];
             a[i] = a[j];
             a[j] = temp;
-        }
-        else
-        {
+        } else {
             temp = a[j];
             a[j] = a[low];
             a[low] = temp;
@@ -377,43 +468,53 @@ int partition(int a[], int low, int high)
     }
 }
 
-void quick_sort(int a[], int low, int high)
-{
-    int j;
-    if(low < high)
-    {
-        j = partition(a, low, high);
+void quick_sort(int a[], int low, int high) {
+    if(low < high) {
+        int j = partition(a, low, high);
         quick_sort(a, low, j - 1);
         quick_sort(a, j + 1, high);
     }
 }
 
-int main()
-{
-    int i, n, a[200000];
+int main() {
+    int n, i;
+    int a[MAX];
     double clk;
     clock_t starttime, endtime;
-    printf("Enter the number of students records: \n");
+
+    printf("Enter the number of student records: ");
     scanf("%d", &n);
-    for(i = 0; i < n; i++) 
-    {
+
+    if(n > MAX) {
+        printf("The number of records exceeds the maximum allowed limit of %d.\n", MAX);
+        return 1;
+    }
+
+    srand(time(NULL)); // Seed the random number generator
+
+    printf("The roll numbers are:\n");
+    for(i = 0; i < n; i++) {
         a[i] = rand() % 100;
-        printf("The roll numbers are \t%d", a[i]);
+        printf("%d ", a[i]);
     }
     printf("\n");
+
     starttime = clock();
     quick_sort(a, 0, n - 1);
     endtime = clock();
+
     clk = (double)(endtime - starttime) / CLOCKS_PER_SEC;
-    printf("\nSorted roll numbers are: \n");
-    for(i = 0; i < n; i++)
-        printf("\t%d", a[i]);
-    printf("\nThe run time is %f\n", clk);
+
+    printf("Sorted roll numbers are:\n");
+    for(i = 0; i < n; i++) {
+        printf("%d ", a[i]);
+    }
+    printf("\n");
+
+    printf("The run time is %f seconds\n", clk);
+
     return 0;
 }
-
-
-
 
 7.
 #include<stdio.h>
@@ -422,25 +523,21 @@ int main()
 
 #define TRUE 1
 #define FALSE 0
+#define MAX_RESUMES 20
 
-void heapbottomup(int h[], int n)
-{
+void heapbottomup(int h[], int n) {
     int i, heap, v, j, k;
-    for(i = n / 2; i >= 1; i--)
-    {
+    for(i = n / 2; i >= 1; i--) {
         k = i;
         v = h[k];
         heap = FALSE;
-        while(!heap && (2 * k) <= n)
-        {
+        while(!heap && (2 * k) <= n) {
             j = 2 * k;
-            if(j < n)
-                if(h[j] < h[j + 1])
-                    j = j + 1;
+            if(j < n && h[j] < h[j + 1])
+                j = j + 1;
             if(v >= h[j])
                 heap = TRUE;
-            else
-            {
+            else {
                 h[k] = h[j];
                 k = j;
             }
@@ -449,16 +546,13 @@ void heapbottomup(int h[], int n)
     }
 }
 
-void heapsort(int h[], int n)
-{
-    int i, temp, last = n;
+void heapsort(int h[], int n) {
+    int i, temp;
     if(n <= 1)
         return;
-    else
-    {
+    else {
         heapbottomup(h, n);
-        for(i = n; i >= 2; i--)
-        {
+        for(i = n; i > 1; i--) { // Changed loop condition to exclude the last index
             temp = h[1];
             h[1] = h[i];
             h[i] = temp;
@@ -467,43 +561,51 @@ void heapsort(int h[], int n)
     }
 }
 
-int main()
-{
-    int h[20], n, i;
+int main() {
+    int h[MAX_RESUMES], n, i;
     double clk;
     clock_t starttime, endtime;
-    printf("\n Enter the number of resumes\n");
+    
+    printf("\nEnter the number of resumes (up to %d): ", MAX_RESUMES);
     scanf("%d", &n);
-    for(i = 1; i <= n; i++) 
-    {
+    
+    if(n <= 0 || n > MAX_RESUMES) {
+        printf("Invalid number of resumes. Please enter a value between 1 and %d.\n", MAX_RESUMES);
+        return 1;
+    }
+    
+    srand(time(NULL)); // Seed the random number generator
+
+    printf("\nThe candidates ranks are:\n");
+    for(i = 1; i <= n; i++) {
         h[i] = rand() % 100;
-        printf("The candidates ranks are: \t%d", h[i]);
+        printf("%d ", h[i]); // Added space for separation
     }
     printf("\n");
+
     starttime = clock();
     heapsort(h, n);
     endtime = clock();
+    
     clk = (double)(endtime - starttime) / CLOCKS_PER_SEC;
-    printf("\n The ranks in sorted order: \n");
+    
+    printf("\nThe ranks in sorted order:\n");
     for(i = 1; i <= n; i++)
-        printf("\t%d", h[i]);
-    printf("\nThe run time is %f\n", clk);
+        printf("%d ", h[i]); // Added space for separation
+    printf("\nThe run time is %f seconds\n", clk);
+    
     return 0;
 }
 
-
-
 8.
-#include<stdio.h>
-#include<string.h>
-#include<conio.h>
+#include <stdio.h>
+#include <string.h>
 
 #define MAX 256 // Assuming ASCII characters
 
 int t[MAX];
 
-void shifttable(char p[])
-{
+void shifttable(char p[]) {
     int i, j, m;
     m = strlen(p);
     for(i = 0; i < MAX; i++)
@@ -512,16 +614,12 @@ void shifttable(char p[])
         t[(int)p[j]] = m - 1 - j;
 }
 
-int horspool(char src[], char p[])
-{
-    int i, j, k, m, n;
+int horspool(char src[], char p[]) {
+    int i, k, m, n;
     n = strlen(src);
     m = strlen(p);
-    printf("\nLength of text = %d", n);
-    printf("\nLength of pattern = %d", m);
     i = m - 1;
-    while(i < n)
-    {
+    while(i < n) {
         k = 0;
         while((k < m) && (p[m - 1 - k] == src[i - k]))
             k++;
@@ -533,22 +631,24 @@ int horspool(char src[], char p[])
     return -1;
 }
 
-int main()
-{
+int main() {
     char src[100], p[100];
     int pos;
-    clrscr();
+    
     printf("Enter the text in which pattern is to be searched:\n");
     fgets(src, sizeof(src), stdin);
+    src[strcspn(src, "\n")] = 0; // Remove the newline character
+    
     printf("Enter the pattern to be searched:\n");
     fgets(p, sizeof(p), stdin);
-    p[strlen(p) - 1] = '\0'; // Remove the newline character
+    p[strcspn(p, "\n")] = 0; // Remove the newline character
+    
     shifttable(p);
     pos = horspool(src, p);
     if(pos >= 0)
-        printf("\n The desired pattern was found starting from position %d", pos + 1);
+        printf("The desired pattern was found starting from position %d\n", pos + 1);
     else
-        printf("\n The pattern was not found in the given text");
-    getch();
+        printf("The pattern was not found in the given text\n");
+
     return 0;
 }
