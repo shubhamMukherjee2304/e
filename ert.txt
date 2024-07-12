@@ -1,654 +1,205 @@
-1.
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-
-int main() {
-    int i, n, a[1000], key, bottom, top, mid, j, temp;
-    double clk;
-    clock_t starttime, endtime;
-    
-    printf("Enter the number of Products\n");
-    scanf("%d", &n);
-    
-    for (i = 0; i < n; i++) {
-        a[i] = rand() % 100;
-        printf("The Product ID is: %d\n", a[i]); // Add newline character after printing each ID
-    }
-    
-    for (i = 0; i < n - 1; i++) {
-        for (j = 0; j < n - i - 1; j++) {
-            if (a[j] > a[j + 1]) {
-                temp = a[j];
-                a[j] = a[j + 1];
-                a[j + 1] = temp;
-            }
-        }
-    }
-    
-    printf("\nSorted Product ID List is:\n");
-    for (i = 0; i < n; i++) {
-        printf("%d\t", a[i]);
-    }
-    
-    printf("\nEnter the Product ID to be searched:\n");
-    scanf("%d", &key);
-    
-    starttime = clock();
-    bottom = 0; // Start from index 0
-    top = n - 1; // Correcting the index
-    do {
-        mid = (bottom + top) / 2;
-        if (key < a[mid])
-            top = mid - 1;
-        else if (key > a[mid])
-            bottom = mid + 1;
-    } while (key != a[mid] && bottom <= top);
-    
-    if (key == a[mid]) {
-        printf("\nProduct found!!\n");
-        printf("\nProduct %d found in position: %d\n", key, mid + 1);
-    } else {
-        printf("\nSearch failed\n%d not found\n", key);
-    }
-    
-    endtime = clock();
-    clk = (double)(endtime - starttime) / CLOCKS_PER_SEC;
-    printf("Time taken: %f seconds\n", clk);
-    
-    return 0;
-}
-
-
-
-
-
-
-2.
-#include<stdio.h>
-#include<time.h>
-
-void bfs(int a[10][10], int n, int source) {
-    int visited[10] = {0}; // Array to keep track of visited vertices
-    int queue[10], front = 0, rear = -1;
-
-    queue[++rear] = source; // Enqueue the source vertex
-    visited[source] = 1; // Mark source vertex as visited
-
-    printf("BFS Traversal: %d", source);
-
-    while(front <= rear) {
-        int current = queue[front++]; // Dequeue a vertex
-        for(int v = 0; v < n; v++) {
-            if(a[current][v] == 1 && !visited[v]) { // If adjacent vertex is not visited
-                printf(" -> %d", v); // Print the visited vertex
-                queue[++rear] = v; // Enqueue it
-                visited[v] = 1; // Mark it as visited
-            }
-        }
-    }
-}
-
-int main() {
-    int a[10][10], n, s;
-    double clk;
-    clock_t starttime, endtime;
-
-    printf("Enter the number of cities: ");
-    scanf("%d", &n);
-
-    printf("Enter the adjacency matrix:\n");
-    for(int i = 0; i < n; i++)
-        for(int j = 0; j < n; j++)
-            scanf("%d", &a[i][j]);
-
-    printf("Enter the source city: ");
-    scanf("%d", &s);
-
-    starttime = clock();
-    bfs(a, n, s);
-    endtime = clock();
-
-    clk = (double)(endtime - starttime) / CLOCKS_PER_SEC;
-    printf("\nRun time: %f seconds\n", clk);
-
-    return 0;
-}
-
-
-3.
-#include<stdio.h>
-#include<time.h>
-
-int n, a[50][50], i, j, count = 0, reach[50], pos[50];
-
-void read_matrix();
-void dfs(int v);
-int adjacent(int i);
-int checkreach(int u);
-
-int main() {
-    int v;
-    double clk;
-    clock_t starttime, endtime;
-    
-    printf("\n\t\t\tDEPTH FIRST SEARCH\n");
-    printf("\nEnter the number of Lands to be surveyed: ");
-    scanf("%d", &n);
-    
-    for (i = 1; i <= n; i++) {
-        pos[i] = 0;
-    }
-    
-    read_matrix();
-    
-    printf("\nEnter the starting Land number: ");
-    scanf("%d", &v);
-    
-    starttime = clock();
-    dfs(v);
-    endtime = clock();
-    
-    clk = (double)(endtime - starttime) / CLOCKS_PER_SEC;
-    
-    printf("\nVertices reached from the given vertex are:\n");
-    for (i = 1; i <= count; i++) {
-        printf("%d\t", reach[i]);
-    }
-    
-    printf("\nThe runtime is %f\n", clk);
-    
-    return 0;
-}
-
-void read_matrix() {
-    printf("\nEnter the adjacency matrix (Enter 0/1):\n");
-    for (i = 1; i <= n; i++) {
-        for (j = 1; j <= n; j++) {
-            if (i != j) {
-                printf("(%d,%d): ", i, j);
-                scanf("%d", &a[i][j]);
-            }
-        }
-    }
-}
-
-void dfs(int v) {
-    int u;
-    reach[++count] = v;
-    u = adjacent(v);
-    while (u) {
-        if (checkreach(u) == 0) {
-            dfs(u);
-        }
-        u = adjacent(v);
-    }
-}
-
-int adjacent(int i) {
-    for (j = pos[i] + 1; j <= n; j++) {
-        if (a[i][j] == 1) {
-            pos[i] = j;
-            return j;
-        }
-    }
-    pos[i] = n + 1;
-    return 0;
-}
-
-int checkreach(int u) {
-    for (i = 1; i <= count; i++) {
-        if (reach[i] == u) {
-            return 1;
-        }
-    }
-    return 0;
-}
-
-
-
-
-4.
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-
-void insertionSort(long long a[], int n)
-{
-    int i, j;
-    long long v;
-    for (i = 1; i < n; i++)
-    {
-        v = a[i];
-        j = i - 1;
-        while (j >= 0 && a[j] > v)
-        {
-            a[j + 1] = a[j];
-            j--;
-        }
-        a[j + 1] = v;
-    }
-    printf("Sorted numbers are:\n");
-    for (i = 0; i < n; i++)
-    {
-        printf("%lld\n", a[i]);
-    }
-}
-void printArray(long long array[], int size)
-{
-    for (int i = 0; i < size; i++)
-    {
-        printf("%d ", array[i]);
-    }
-    printf("\n");
-}
-
-int main()
-{
-    int size;
-    srand(time(NULL));
-
-    printf("Enter the number of elements: ");
-    scanf("%d", &size);
-
-    long long data[size];
-    for (int i = 0; i < size; i++)
-    {
-        data[i] = 9000000000 + (rand() % 99999999) + 1;
-    }
-
-    printf("Unsorted array:\n");
-    printArray(data, size);
-
-    clock_t start_time = clock();
-    insertionSort(data, size);
-    clock_t end_time = clock();
-    double time_taken = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
-
-    printf("Sorted array:\n");
-    printArray(data, size);
-    printf("Time taken to sort the array: %f seconds\n", time_taken);
-    return 0;
-}
-
-
-// second code - insertion sort 
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-
-void insertionSort(int array[], int size)
-{
-    for (int i = 1; i < size; i++)
-    {
-        int key = array[i];
-        int j = i - 1;
-        while (j >= 0 && array[j] > key)
-        {
-            array[j + 1] = array[j];
-            j = j - 1;
-        }
-        array[j + 1] = key;
-    }
-}
-void printArray(int array[], int size)
-{
-    for (int i = 0; i < size; i++)
-    {
-        printf("%d ", array[i]);
-    }
-    printf("\n");
-}
-int main()
-{
-    int size;
-    srand(time(NULL));
-
-    printf("Enter the number of elements: ");
-    scanf("%d", &size);
-
-    int data[size];
-    for (int i = 0; i < size; i++)
-    {
-        data[i] = rand() % 100;
-    }
-
-    printf("Unsorted array:\n");
-    printArray(data, size);
-
-    clock_t start_time = clock();
-    insertionSort(data, size);
-    clock_t end_time = clock();
-    double time_taken = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
-
-    printf("Sorted array:\n");
-    printArray(data, size);
-    printf("Time taken to sort the array: %f seconds\n", time_taken);
-    return 0;
-}
-
-
-
-5.
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-
-#define MAX 500000
-
-int a[MAX];
-
-void merge(int low, int mid, int high);
-void merge_sort(int low, int high);
-
-void merge_sort(int low, int high)
-{
-    int mid;
-    if(low < high)
-    {
-        mid = (low + high) / 2;
-        merge_sort(low, mid);
-        merge_sort(mid + 1, high);
-        merge(low, mid, high);
-    }
-}
-
-void merge(int low, int mid, int high)
-{
-    int h, i, j, k;
-    int b[MAX];
-    h = low;
-    i = low;
-    j = mid + 1;
-
-    while((h <= mid) && (j <= high))
-    {
-        if(a[h] <= a[j])
-        {
-            b[i] = a[h];
-            h++;
-        }
-        else
-        {
-            b[i] = a[j];
-            j++;
-        }
-        i++;
-    }
-
-    if(h > mid)
-    {
-        for(k = j; k <= high; k++)
-        {
-            b[i] = a[k];
-            i++;
-        }
-    }
-    else
-    {
-        for(k = h; k <= mid; k++)
-        {
-            b[i] = a[k];
-            i++;
-        }
-    }
-
-    for(k = low; k <= high; k++) 
-    {
-        a[k] = b[k];
-    }
-}
-
-int main()
-{
-    int n, i;
-    double clk;
-    clock_t starttime, endtime;
-    printf("MERGE SORT\n");
-    printf("Enter the number of employee records: ");
-    scanf("%d", &n);
-
-    if (n > MAX)
-    {
-        printf("The number of records exceeds the maximum allowed limit of %d.\n", MAX);
-        return 1;
-    }
-
-    srand(time(NULL)); // Seed the random number generator
-
-    for(i = 0; i < n; i++) 
-    {
-        a[i] = rand() % 100;
-        printf("The Employee IDs are: \t%d\n", a[i]);
-    }
-    printf("\n");
-
-    starttime = clock(); 
-    merge_sort(0, n - 1);
-    endtime = clock();
-    clk = (double)(endtime - starttime) / CLOCKS_PER_SEC;
-
-    printf("\nEmployee IDs in sorted order:\n");
-    for(i = 0; i < n; i++) 
-    {
-        printf("\t%d\n", a[i]);
-    }
-    printf("\nThe run time is %f seconds\n", clk);
-
-    return 0;
-}
-
-6.
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-
-#define MAX 200000
-
-int partition(int a[], int low, int high) {
-    int i = low + 1, j = high, temp;
-    int pivot = a[low];
-
-    while(1) {
-        while(i <= high && a[i] <= pivot)
-            i++;
-        while(a[j] > pivot)
-            j--;
-        if(i < j) {
-            temp = a[i];
-            a[i] = a[j];
-            a[j] = temp;
-        } else {
-            temp = a[j];
-            a[j] = a[low];
-            a[low] = temp;
-            return j;
-        }
-    }
-}
-
-void quick_sort(int a[], int low, int high) {
-    if(low < high) {
-        int j = partition(a, low, high);
-        quick_sort(a, low, j - 1);
-        quick_sort(a, j + 1, high);
-    }
-}
-
-int main() {
-    int n, i;
-    int a[MAX];
-    double clk;
-    clock_t starttime, endtime;
-
-    printf("Enter the number of student records: ");
-    scanf("%d", &n);
-
-    if(n > MAX) {
-        printf("The number of records exceeds the maximum allowed limit of %d.\n", MAX);
-        return 1;
-    }
-
-    srand(time(NULL)); // Seed the random number generator
-
-    printf("The roll numbers are:\n");
-    for(i = 0; i < n; i++) {
-        a[i] = rand() % 100;
-        printf("%d ", a[i]);
-    }
-    printf("\n");
-
-    starttime = clock();
-    quick_sort(a, 0, n - 1);
-    endtime = clock();
-
-    clk = (double)(endtime - starttime) / CLOCKS_PER_SEC;
-
-    printf("Sorted roll numbers are:\n");
-    for(i = 0; i < n; i++) {
-        printf("%d ", a[i]);
-    }
-    printf("\n");
-
-    printf("The run time is %f seconds\n", clk);
-
-    return 0;
-}
-
-7.
-#include<stdio.h>
-#include<time.h>
-#include<stdlib.h>
-
-#define TRUE 1
-#define FALSE 0
-#define MAX_RESUMES 20
-
-void heapbottomup(int h[], int n) {
-    int i, heap, v, j, k;
-    for(i = n / 2; i >= 1; i--) {
-        k = i;
-        v = h[k];
-        heap = FALSE;
-        while(!heap && (2 * k) <= n) {
-            j = 2 * k;
-            if(j < n && h[j] < h[j + 1])
-                j = j + 1;
-            if(v >= h[j])
-                heap = TRUE;
-            else {
-                h[k] = h[j];
-                k = j;
-            }
-        }
-        h[k] = v;
-    }
-}
-
-void heapsort(int h[], int n) {
-    int i, temp;
-    if(n <= 1)
-        return;
-    else {
-        heapbottomup(h, n);
-        for(i = n; i > 1; i--) { // Changed loop condition to exclude the last index
-            temp = h[1];
-            h[1] = h[i];
-            h[i] = temp;
-            heapbottomup(h, i - 1);
-        }
-    }
-}
-
-int main() {
-    int h[MAX_RESUMES], n, i;
-    double clk;
-    clock_t starttime, endtime;
-    
-    printf("\nEnter the number of resumes (up to %d): ", MAX_RESUMES);
-    scanf("%d", &n);
-    
-    if(n <= 0 || n > MAX_RESUMES) {
-        printf("Invalid number of resumes. Please enter a value between 1 and %d.\n", MAX_RESUMES);
-        return 1;
-    }
-    
-    srand(time(NULL)); // Seed the random number generator
-
-    printf("\nThe candidates ranks are:\n");
-    for(i = 1; i <= n; i++) {
-        h[i] = rand() % 100;
-        printf("%d ", h[i]); // Added space for separation
-    }
-    printf("\n");
-
-    starttime = clock();
-    heapsort(h, n);
-    endtime = clock();
-    
-    clk = (double)(endtime - starttime) / CLOCKS_PER_SEC;
-    
-    printf("\nThe ranks in sorted order:\n");
-    for(i = 1; i <= n; i++)
-        printf("%d ", h[i]); // Added space for separation
-    printf("\nThe run time is %f seconds\n", clk);
-    
-    return 0;
-}
-
-8.
-#include <stdio.h>
-#include <string.h>
-
-#define MAX 256 // Assuming ASCII characters
-
-int t[MAX];
-
-void shifttable(char p[]) {
-    int i, j, m;
-    m = strlen(p);
-    for(i = 0; i < MAX; i++)
-        t[i] = m;
-    for(j = 0; j < m - 1; j++)
-        t[(int)p[j]] = m - 1 - j;
-}
-
-int horspool(char src[], char p[]) {
-    int i, k, m, n;
-    n = strlen(src);
-    m = strlen(p);
-    i = m - 1;
-    while(i < n) {
-        k = 0;
-        while((k < m) && (p[m - 1 - k] == src[i - k]))
-            k++;
-        if(k == m)
-            return(i - m + 1);
-        else
-            i += t[(int)src[i]];
-    }
-    return -1;
-}
-
-int main() {
-    char src[100], p[100];
-    int pos;
-    
-    printf("Enter the text in which pattern is to be searched:\n");
-    fgets(src, sizeof(src), stdin);
-    src[strcspn(src, "\n")] = 0; // Remove the newline character
-    
-    printf("Enter the pattern to be searched:\n");
-    fgets(p, sizeof(p), stdin);
-    p[strcspn(p, "\n")] = 0; // Remove the newline character
-    
-    shifttable(p);
-    pos = horspool(src, p);
-    if(pos >= 0)
-        printf("The desired pattern was found starting from position %d\n", pos + 1);
-    else
-        printf("The pattern was not found in the given text\n");
-
-    return 0;
-}
+1 a)
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+cs=pd.read_csv('cars.csv')
+cs.head()
+fuel=cs['Fuel_Type']
+prices=cs['Price']
+plt.bar(fuel,prices,color="skyblue")
+plt.xlabel("Fuel Type")
+plt.ylabel("Price($)")
+plt.title("[Price vs Fuel]1NT22CS190: Siddharth oji")
+plt.xticks(rotation=45,ha="right")
+plt.tight_layout()
+plt.show()
+
+1 b)
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+cr=pd.read_csv("cars.csv")
+x=cr['Age']
+y=cr['Price']
+fig,ax=plt.subplots()
+plt.scatter(x,y,color="red",marker="^",s=20)
+plt.xlabel("Age")
+plt.ylabel("Price")
+plt.title("1NT22CS190 Siddharth oji")
+
+2 a)
+import matplotlib.pyplot as plt
+sub=['Physics','Maths','C Language','electronics','english']
+marks=[91,98,87,96,85]
+plt.plot(sub,marks)
+plt.xlabel('subjects')
+plt.ylabel('marks')
+plt.title('1NT22CS190:Siddharth')
+plt.show()
+2 b)
+import matplotlib.pyplot as plt
+sub = ['Physics', 'Maths', 'C Language', 'Electronics', 'English']
+marks = [91, 98, 87, 96, 86]
+plt.plot(sub, marks, marker='o', color='b', linestyle='-', linewidth=2)
+plt.xlabel('Subjects')
+plt.ylabel('Marks')
+plt.title('1NT22CS190: Siddharth')
+plt.show()
+
+3)
+import matplotlib.pyplot as plt
+import pandas as pd
+df=pd.read_csv("flights.csv")
+hour_data=df['hour']
+plt.hist(hour_data, bins=24,edgecolor='c',alpha=1)
+plt.xlabel("Hour of the day")
+plt.ylabel("Frequency")
+plt.title("1NT22CS190 Siddharth Oji")
+plt.grid(True)
+plt.show()
+
+4)
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from matplotlib import pyplot as plt
+# In[20]:
+df=pd.read_csv('flights.csv')
+carrier_counts=df['carrier'].value_counts()
+plt.pie(carrier_counts,labels=carrier_counts.index,autopct='%1.1f%%',startangl
+e=80)
+plt.title("1NT22CS190 Siddharth oji")
+plt.show()
+
+5)
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
+import seaborn as sns
+sl=pd.read_csv("sales1.csv")
+sl.head()
+sns.regplot(x="Units",y="Unit
+Price",data=sl,color="r",marker="+",scatter_kws={'color':'green'})
+plt.title("1NT22CS190 Siddharth oji-Regression Plot",fontsize=15)
+plt.xlabel("Units (ut)")
+plt.ylabel("Unit Price ($)")
+
+6)
+from bokeh.plotting import figure,curdoc,show
+from bokeh.models import ColumnDataSource
+import numpy as np
+x=np.random.randn(100)
+y=np.random.randn(100)
+source=ColumnDataSource(data=dict(x=x,y=y))
+plot=figure(title="",height=400,width=500)
+plot.line('x','y',source=source,color="blue",alpha=0.5,line_width=2,legend_lab
+el="Y vs X")
+curdoc().add_root(plot)
+show(plot)
+
+7)
+from bokeh.plotting import curdoc, figure,show
+from bokeh.layouts import column
+from bokeh.models import Select
+import numpy as np
+x=np.linspace(0,2*np.pi,100)
+y=np.sin(x)
+plot=figure(title="1NT22CS190 Siddharth Oji",height=300,width=600,y_range=(-
+1.1,1.1))
+line=plot.line(x,y,line_width=2)
+dropdown_options=["sin(x)","cos(x)","tan(x)"]
+dropdown=Select(title="Function",value="sin(x)",options=dropdown_options)
+def update_plot(attrname,old,new):
+ if dropdown.value=="sin(x)":
+ y=np.sin(x)
+ elif dropdown.value=="cos(x)":
+ y=np.cos(x)
+ else:
+ y=np.tan(x)
+ line.data_source.data['y']=y
+dropdown.on_change('value',update_plot)
+layout=column(dropdown,plot)
+curdoc().add_root(layout)
+show(layout)
+
+8)
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from PIL import Image
+from matplotlib import cm
+# Read the image
+image = plt.imread("Path of the img here")
+image_array = np.array(image)
+plt.figure(figsize=(8,8))
+plt.imshow(image_array)
+plt.title("")
+plt.axis("off")
+plt.show()
+gray_img_array = np.mean(image_array,axis=-1,dtype=int)
+plt.figure(figsize=(8,8))
+plt.imshow(gray_img_array,cmap="gray")
+plt.title("1NT22CS211 VAIBHAV S H")
+plt.axis("off")
+plt.show()
+#Grayscale of img
+fig = plt.figure(figsize=(7,7))
+ax=fig.add_subplot(111,projection="3d")
+x,y=np.meshgrid(np.arange(gray_img_array.shape[1]),np.arange(gray_img_array.sh
+ape[0]))
+z=gray_img_array
+ax.plot_surface(x,y,z,cmap=cm.gray,linewidth=0,antialiased=False)
+ax.set_xlabel("X")
+ax.set_ylabel("Y")
+ax.set_zlabel("Intensity")
+plt.title("")
+plt.show()
+#Sine wave of img
+fig = plt.figure(figsize=(7,7))
+ax=fig.add_subplot(111,projection="3d")
+x=np.linspace(0,10,100)
+y=np.linspace(0,10,100)
+x,y=np.meshgrid(x,y)
+z=np.sin(np.sqrt(x**2+y**2))
+ax.plot_surface(x,y,z,cmap=cm.viridis,linewidth=0,antialiased=False)
+ax.set_xlabel("X")
+ax.set_ylabel("Y")
+ax.set_zlabel("Z")
+plt.title("")
+plt.show()
+
+9)
+import plotly.graph_objects as go
+data=[{"x": [1, 2, 3, 4, 5], "y": [6, 7, 8, 9, 10]},{"x":[6, 7, 8, 9, 10],
+"y": [1, 2, 3, 4, 5]}]
+fig = go.Figure()
+for i in range(len(data)):
+ fig.add_trace(go.Scatter(x=data[i]["x"], y=data[i]["y"],
+mode='lines+markers'))
+ fig.update_layout(title="SIDDHARTH OJI", xaxis_title="time",
+yaxis_title="value")
+fig.show()
+import pandas as pd
+import plotly.graph_objects as go
+dat=pd.read_csv("sales1.csv")
+fig=go.Figure()
+fig.update_layout(title="SIDDHARTH OJI", xaxis_title="order dates",
+yaxis_title="value")
+fig.add_trace(go.Scatter(x=dat.iloc[0:,0],y=dat.iloc[5:,5],mode="lines+markers
+"))
+fig.add_trace(go.Scatter(x=dat.iloc[0:,0],y=dat.iloc[4:,4],mode="lines+markers
+"))
+fig.update_layout(title="SIDDHARTH OJI", xaxis_title="order dates",
+yaxis_title="value")
+fig.show()
+
+10)
+import pandas as pd
+import plotly.express as px
+election=pd.read_csv("election.csv")
+election=election[0:500]
+fig=px.scatter(election,x="STATE",y="NAME",marginal_x="histogram",marginal_y="
+rug",color="GENDER",title="Election Data")
+fig.show() 
